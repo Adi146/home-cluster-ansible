@@ -1,0 +1,22 @@
+---
+- name: Kubeadm init
+  ansible.builtin.command:
+#    cmd: kubeadm init --skip-phases=addon/kube-proxy
+    cmd: kubeadm init --pod-network-cidr=10.244.0.0/16
+    creates: /etc/kubernetes/kubelet.conf
+
+- name: Create .kube directory
+  file:
+    path: .kube
+    state: directory
+    owner: "{{ ansible_user | default(ansible_user_id) }}"
+    group: "{{ ansible_user | default(ansible_user_id) }}"
+
+- name: Copy Kubeconfig
+  ansible.builtin.copy:
+    src: /etc/kubernetes/admin.conf
+    dest: .kube/config
+    owner: "{{ ansible_user | default(ansible_user_id) }}"
+    group: "{{ ansible_user | default(ansible_user_id) }}"
+    mode: 0600
+    remote_src: true

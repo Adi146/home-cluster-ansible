@@ -1,0 +1,88 @@
+---
+- name: Create crio config file
+  ansible.builtin.blockinfile:
+    path: "/etc/modules-load.d/crio.conf"
+    create: true
+    block: |
+          overlay
+          br_netfilter
+
+- name: modprobe overlay
+  community.general.modprobe:
+    name: overlay
+    state: present
+
+- name: modprobe br_netfilter
+  community.general.modprobe:
+    name: br_netfilter
+    state: present
+
+- name: Set system configurations for Kubernetes networking
+  ansible.builtin.blockinfile:
+    path: "/etc/sysctl.d/99-kubernetes-cri.conf"
+    create: true
+    block: |
+           net.bridge.bridge-nf-call-iptables = 1
+           net.bridge.bridge-nf-call-ip6tables = 1
+           net.ipv4.ip_forward = 1
+  notify:
+  - Restart sysctl
+
+- name: "Remove swap from /etc/fstab"
+  ansible.posix.mount:
+    name: "{{ item }}"
+    fstype: swap
+    state: absent
+  with_items:
+  - swap
+  - none
+  notify:
+  - Swapoff
+
+- name: Add Kubernetes repo
+  ansible.builtin.deb822_repository:
+    name: kubernetes
+    types: [deb]
+    uris: "https://apt.kubernetes.io"
+    signed_by: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
+    suites: [kubernetes-xenial]
+    components: [main]
+    state: present
+    enabled: yes
+
+- name: Add libcontrainers repo
+  ansible.builtin.deb822_repository:
+    name: devel:kubic:libcontainers:stable
+    types: [deb]
+    uris: "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/{{ crio_os }}/"
+    signed_by: "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/{{ crio_os }}/Release.key"
+    suites: /
+    enabled: yes
+
+- name: Add libcontainers cri-o repo
+  ansible.builtin.deb822_repository:
+    name: devel:kubic:libcontainers:stable:cri-o:{{ kubernetes_major_version }}
+    types: [deb]
+    uris: "http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/{{ kubernetes_major_version }}/{{ crio_os }}/"
+    signed_by: "https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:{{ kubernetes_major_version }}/{{ crio_os }}/Release.key"
+    suites: /
+    enabled: yes
+
+- name: Install k8s and cri-o packages
+  ansible.builtin.apt:
+    pkg:
+    - cri-o
+    - cri-o-runc
+    - kubeadm={{ kubernetes_version }}
+    - kubectl={{ kubernetes_version }}
+    - kubelet={{ kubernetes_version }}
+    update_cache: yes
+
+- name: Enable and start crio service
+  ansible.builtin.systemd:
+    name: crio
+    state: started
+    enabled: true
+
+- name: Flush handlers
+  meta: flush_handlers

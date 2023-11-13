@@ -1,0 +1,5 @@
+- name: Restart sysctl
+  ansible.builtin.command: sysctl --system
+
+- name: Swapoff
+  ansible.builtin.command: swapoff -a

@@ -1,0 +1,43 @@
+---
+- name: Add ArgoCD helm chart repo
+  kubernetes.core.helm_repository:
+    kubeconfig: "{{ kubeconfig }}"
+    name: argo-cd
+    repo_url: "https://argoproj.github.io/argo-helm"
+
+- name: Install ArgoCD from helm
+  kubernetes.core.helm:
+    kubeconfig: "{{ kubeconfig }}"
+    name: argo-cd
+    chart_ref: argo-cd/argo-cd
+    release_namespace: argo-cd
+    create_namespace: true
+    values:
+      dex:
+        enabled: false
+      notifications:
+        enabled: false
+      applicationSet:
+        enabled: false
+
+- name: Adding bootstrap chart
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition:
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: bootstrap
+        namespace: argo-cd
+      spec:
+        destination:
+          namespace: argo-cd
+          server: https://kubernetes.default.svc
+        project: default
+        source:
+          path: "{{ bootstrap_repo_path }}"
+          repoURL: "{{ bootstrap_repo_url }}"
+          targetRevision: HEAD
+        syncPolicy:
+          automated: {}

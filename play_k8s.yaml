@@ -1,0 +1,53 @@
+- hosts: all:!localhost
+  become: yes
+  become_method: sudo
+  become_user: root
+  gather_facts: yes
+  connection: ssh
+  roles:
+    - role: 'common'
+
+- hosts: "masters, workers"
+  become: yes
+  become_method: sudo
+  become_user: root
+  gather_facts: yes
+  connection: ssh
+  roles:
+    - role: "k8s-common"
+
+- hosts: "masters"
+  become: yes
+  become_method: sudo
+  become_user: root
+  gather_facts: yes
+  connection: ssh
+  roles:
+    - role: "k8s-control-plane"
+  tasks:
+    - name: Fetch Kubeconfig
+      ansible.builtin.fetch:
+        src: /etc/kubernetes/admin.conf
+        dest: .kubeconfig.yaml
+        flat: true
+
+    - name: Untaint
+      local_action:
+        module: kubernetes.core.k8s_taint
+        state: absent
+        kubeconfig: ./.kubeconfig.yaml
+        name: "{{ ansible_facts['hostname'] }}"
+        taints:
+          - key: node-role.kubernetes.io/control-plane
+
+- hosts: "kube"
+  gather_facts: yes
+  connection: local
+  roles:
+    - role: "k8s-flannel"
+      vars:
+        kubeconfig: ./.kubeconfig.yaml
+    - role: "k8s-argo-cd"
+      vars:
+        kubeconfig: ./.kubeconfig.yaml
+        bootstrap_repo_url: "{{ argo_cd_bootstrap_repo_url }}"

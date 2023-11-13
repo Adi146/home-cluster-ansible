@@ -1,0 +1,42 @@
+version: "3.7"
+
+networks:
+  db:
+
+
+services:
+  vscode:
+    build: .
+    image: ansible-dev
+    volumes:
+      - ../:/workspace
+      # Docker
+      - ~/.docker:/root/.docker:z
+      # Docker socket to access Docker server
+      - /var/run/docker.sock:/var/run/docker.sock
+      # SSH directory for Linux, OSX and WSL
+      - ~/.ssh:/root/.ssh:z
+      # For Windows without WSL, a copy will be made
+      # from /tmp/.ssh to ~/.ssh to fix permissions
+      # - ~/.ssh:/tmp/.ssh:ro
+      # Shell history persistence
+      - ~/.zsh_history:/root/.zsh_history:z
+      - ~/.zshrc:/root/.zshrc:z
+      - ~/.oh-my-zsh:/root/.oh-my-zsh:z
+      # Git config
+      - ~/.gitconfig:/root/.gitconfig:z
+      - ~/.netrc:/root/.netrc:z
+      # Kubernetes
+      - ~/.kube:/root/.kube:z
+
+      - ~/.config:/root/.config:z
+    environment:
+      - TZ=
+    cap_add:
+      # For debugging with dlv
+      - SYS_PTRACE
+    security_opt:
+      # For debugging with dlv
+      - seccomp:unconfined
+    entrypoint: [ "/bin/sh", "-c", "while sleep 1000; do :; done" ]
+    network_mode: "host"

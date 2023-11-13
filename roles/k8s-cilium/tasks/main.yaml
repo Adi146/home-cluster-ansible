@@ -1,0 +1,26 @@
+- name: Get status of api_server
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    kind: Pod
+    label_selectors:
+      - "component = kube-apiserver"
+  register: api_server
+
+- name: Add Cilium helm chart repo
+  kubernetes.core.helm_repository:
+    kubeconfig: "{{ kubeconfig }}"
+    name: cilium
+    repo_url: https://helm.cilium.io/
+
+- name: Install Cilium from helm with kube-proxy replacement
+  kubernetes.core.helm:
+    kubeconfig: "{{ kubeconfig }}"
+    name: cilium
+    chart_ref: cilium/cilium
+    release_namespace: kube-system
+    values:
+      kubeProxyReplacement: "true"
+      k8sServiceHost: "{{ (api_server['resources'][0]['metadata']['annotations']['kubeadm.kubernetes.io/kube-apiserver.advertise-address.endpoint'] | split(':'))[0] }}"
+      k8sServicePort: "{{ (api_server['resources'][0]['metadata']['annotations']['kubeadm.kubernetes.io/kube-apiserver.advertise-address.endpoint'] | split(':'))[1] }}"
+      operator:
+        replicas: 1
