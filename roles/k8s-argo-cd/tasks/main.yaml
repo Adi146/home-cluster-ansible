@@ -4,6 +4,7 @@
     kubeconfig: "{{ kubeconfig }}"
     name: argo-cd
     repo_url: "https://argoproj.github.io/argo-helm"
+  delegate_to: localhost
 
 - name: Install ArgoCD from helm
   kubernetes.core.helm:
@@ -19,6 +20,7 @@
         enabled: false
       applicationSet:
         enabled: false
+  delegate_to: localhost
 
 - name: Adding bootstrap chart
   kubernetes.core.k8s:
@@ -41,3 +43,4 @@
           targetRevision: HEAD
         syncPolicy:
           automated: {}
+  delegate_to: localhost

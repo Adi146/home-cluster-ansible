@@ -48,7 +48,7 @@
     suites: [kubernetes-xenial]
     components: [main]
     state: present
-    enabled: yes
+    enabled: true
 
 - name: Add libcontrainers repo
   ansible.builtin.deb822_repository:
@@ -57,7 +57,7 @@
     uris: "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/{{ crio_os }}/"
     signed_by: "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/{{ crio_os }}/Release.key"
     suites: /
-    enabled: yes
+    enabled: true
 
 - name: Add libcontainers cri-o repo
   ansible.builtin.deb822_repository:
@@ -66,17 +66,17 @@
     uris: "http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/{{ kubernetes_major_version }}/{{ crio_os }}/"
     signed_by: "https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:{{ kubernetes_major_version }}/{{ crio_os }}/Release.key"
     suites: /
-    enabled: yes
+    enabled: true
 
 - name: Install k8s and cri-o packages
   ansible.builtin.apt:
     pkg:
-    - cri-o
-    - cri-o-runc
-    - kubeadm={{ kubernetes_version }}
-    - kubectl={{ kubernetes_version }}
-    - kubelet={{ kubernetes_version }}
-    update_cache: yes
+      - cri-o
+      - cri-o-runc
+      - kubeadm={{ kubernetes_version }}
+      - kubectl={{ kubernetes_version }}
+      - kubelet={{ kubernetes_version }}
+    update_cache: true
 
 - name: Enable and start crio service
   ansible.builtin.systemd:
