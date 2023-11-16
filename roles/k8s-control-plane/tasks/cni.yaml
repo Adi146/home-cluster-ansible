@@ -1,8 +1,8 @@
 ---
 - name: Install cilium
-  include_tasks: cilium.yaml
+  ansible.builtin.include_tasks: cilium.yaml
   when: cni == "cilium"
 
 - name: Install flannel
-  include_tasks: "flannel.yaml"
+  ansible.builtin.include_tasks: "flannel.yaml"
   when: cni == "flannel"

@@ -6,13 +6,10 @@
       - init
       - --pod-network-cidr={{ pod_networking_cidr }}
       - --skip-phases={{ skip_phases }}
-#    cmd: kubeadm init --skip-phases=addon/kube-proxy
-    #cmd: "kubeadm init {{ kubeadm_init_args }}"
-    #cmd: kubeadm init --pod-network-cidr=10.244.0.0/16
     creates: /etc/kubernetes/kubelet.conf
 
 - name: Create .kube directory
-  file:
+  ansible.builtin.file:
     path: .kube
     state: directory
     owner: "{{ ansible_user | default(ansible_user_id) }}"
@@ -34,6 +31,6 @@
     flat: true
 
 - name: Install cni
-  include_tasks: cni.yaml
+  ansible.builtin.include_tasks: cni.yaml
 
 

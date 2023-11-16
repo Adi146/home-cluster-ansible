@@ -2,12 +2,12 @@
 - name: Install base packages
   ansible.builtin.apt:
     pkg:
-    - python3-debian
-    - htop
-    - vim
-    - net-tools
-    - inetutils-ping
-    - git
-    - curl
-    - dnsutils
-    update_cache: yes
+      - python3-debian
+      - htop
+      - vim
+      - net-tools
+      - inetutils-ping
+      - git
+      - curl
+      - dnsutils
+    update_cache: true

@@ -1,24 +1,27 @@
-- hosts: all:!localhost
+- name: "Common Setup"
+  hosts: all:!localhost
   become: true
-  become_method: sudo
+  become_method: ansible.builtin.sudo
   become_user: root
   gather_facts: true
   connection: ssh
   roles:
     - role: 'common'
 
-- hosts: "masters, workers"
+- name: "Common Kubernetes Setup"
+  hosts: "masters, workers"
   become: true
-  become_method: sudo
+  become_method: ansible.builtin.sudo
   become_user: root
   gather_facts: true
   connection: ssh
   roles:
     - role: "k8s-common"
 
-- hosts: "masters"
+- name: "Master Kubernetes Setup"
+  hosts: "masters"
   become: true
-  become_method: sudo
+  become_method: ansible.builtin.sudo
   become_user: root
   gather_facts: true
   connection: ssh
@@ -31,6 +34,9 @@
         kubeconfig: ./.kubeconfig.yaml
         bootstrap_repo_url: "{{ argo_cd_bootstrap_repo_url }}"
         domain: "{{ argo_cd_cluster_domain }}"
+    - role: "nfs-server"
+      vars:
+        path: /data
   tasks:
     - name: Untaint
       kubernetes.core.k8s_taint:
@@ -40,4 +46,3 @@
         taints:
           - key: node-role.kubernetes.io/control-plane
       delegate_to: localhost
-

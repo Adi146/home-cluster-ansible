@@ -7,12 +7,12 @@
           overlay
           br_netfilter
 
-- name: modprobe overlay
+- name: Modprobe overlay
   community.general.modprobe:
     name: overlay
     state: present
 
-- name: modprobe br_netfilter
+- name: Modprobe br_netfilter
   community.general.modprobe:
     name: br_netfilter
     state: present
@@ -26,7 +26,7 @@
            net.bridge.bridge-nf-call-ip6tables = 1
            net.ipv4.ip_forward = 1
   notify:
-  - Restart sysctl
+    - Restart sysctl
 
 - name: "Remove swap from /etc/fstab"
   ansible.posix.mount:
@@ -34,10 +34,10 @@
     fstype: swap
     state: absent
   with_items:
-  - swap
-  - none
+    - swap
+    - none
   notify:
-  - Swapoff
+    - Swapoff
 
 - name: Add Kubernetes repo
   ansible.builtin.deb822_repository:
@@ -85,4 +85,4 @@
     enabled: true
 
 - name: Flush handlers
-  meta: flush_handlers
+  ansible.builtin.meta: flush_handlers

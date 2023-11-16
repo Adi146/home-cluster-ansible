@@ -1,0 +1,28 @@
+---
+- name: Install nfs packages
+  ansible.builtin.apt:
+    pkg:
+      - nfs-kernel-server
+    update_cache: true
+
+- name: Create share folder
+  ansible.builtin.file:
+    path: "{{ path }}"
+    state: directory
+    mode: '0777'
+
+- name: "Create exports"
+  ansible.builtin.template:
+    src: exports.j2
+    dest: /etc/exports
+    owner: root
+    group: root
+    mode: '0644'
+  register: exports
+
+- name: Enable and restart nfs-kernel-server service
+  ansible.builtin.systemd:
+    name: nfs-kernel-server
+    state: restarted
+    enabled: true
+  when: exports.changed
