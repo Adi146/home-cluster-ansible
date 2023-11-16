@@ -9,5 +9,5 @@
     - inetutils-ping
     - git
     - curl
-    - arping
+    - dnsutils
     update_cache: yes

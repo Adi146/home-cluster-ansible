@@ -41,6 +41,10 @@
           path: "{{ bootstrap_repo_path }}"
           repoURL: "{{ bootstrap_repo_url }}"
           targetRevision: HEAD
+          helm:
+            parameters:
+              - name: domain
+                value: "{{ domain }}"
         syncPolicy:
           automated: {}
   delegate_to: localhost

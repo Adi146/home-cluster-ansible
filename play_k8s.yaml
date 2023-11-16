@@ -30,6 +30,7 @@
       vars:
         kubeconfig: ./.kubeconfig.yaml
         bootstrap_repo_url: "{{ argo_cd_bootstrap_repo_url }}"
+        domain: "{{ argo_cd_cluster_domain }}"
   tasks:
     - name: Untaint
       kubernetes.core.k8s_taint:
