@@ -34,6 +34,7 @@
         kubeconfig: ./.kubeconfig.yaml
         bootstrap_repo_url: "{{ argo_cd_bootstrap_repo_url }}"
         domain: "{{ argo_cd_cluster_domain }}"
+        mail_address: "{{ argo_cd_mail_address }}"
     - role: "nfs-server"
       vars:
         path: /data

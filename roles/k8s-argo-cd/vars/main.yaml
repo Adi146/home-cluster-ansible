@@ -2,3 +2,4 @@ kubeconfig: NULL
 bootstrap_repo_path: charts/bootstrap
 bootstrap_repo_url: NULL
 domain: example.com
+mail_address: mail@example.com

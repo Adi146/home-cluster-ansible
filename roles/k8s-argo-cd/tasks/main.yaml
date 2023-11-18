@@ -45,6 +45,8 @@
             parameters:
               - name: domain
                 value: "{{ domain }}"
+              - name: mail_address
+                value: "{{ mail_address }}"
         syncPolicy:
           automated: {}
   delegate_to: localhost
