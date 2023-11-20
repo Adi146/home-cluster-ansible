@@ -7,6 +7,8 @@
   connection: ssh
   roles:
     - role: 'common'
+      vars:
+        user: "{{ users }}"
 
 - name: "Common Kubernetes Setup"
   hosts: "masters, workers"

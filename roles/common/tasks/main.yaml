@@ -10,4 +10,27 @@
       - git
       - curl
       - dnsutils
+      - zsh
     update_cache: true
+
+- name: Setup user accounts
+  ansible.builtin.user:
+    name: "{{ item.username }}"
+    shell: "{{ item.shell }}"
+  loop: "{{ users }}"
+
+- name: Fetch authorized keys from github
+  ansible.posix.authorized_key:
+    user: "{{ item.username }}"
+    state: present
+    key: "https://github.com/{{ item.github_user }}.keys"
+  loop: "{{ users }}"
+  when: '"github_user" in item'
+
+- name: Add sudo privilegues
+  community.general.sudoers:
+    name: "{{ item.username }}"
+    state: "{% if 'sudo' in item and item.sudo %}present{% else %}absent{%endif%}"
+    user: "{{ item.username }}"
+    commands: ALL
+  loop: "{{ users }}"
