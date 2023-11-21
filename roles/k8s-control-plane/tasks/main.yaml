@@ -21,7 +21,7 @@
     dest: .kube/config
     owner: "{{ ansible_user | default(ansible_user_id) }}"
     group: "{{ ansible_user | default(ansible_user_id) }}"
-    mode: 0600
+    mode: '0600'
     remote_src: true
 
 - name: Fetch Kubeconfig
@@ -32,5 +32,3 @@
 
 - name: Install cni
   ansible.builtin.include_tasks: cni.yaml
-
-

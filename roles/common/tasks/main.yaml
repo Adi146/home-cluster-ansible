@@ -1,4 +1,9 @@
 ---
+- name: Upgrade
+  ansible.builtin.apt:
+    upgrade: safe
+    update_cache: true
+
 - name: Install base packages
   ansible.builtin.apt:
     pkg:
@@ -11,7 +16,6 @@
       - curl
       - dnsutils
       - zsh
-    update_cache: true
 
 - name: Setup user accounts
   ansible.builtin.user:
@@ -30,7 +34,7 @@
 - name: Add sudo privilegues
   community.general.sudoers:
     name: "{{ item.username }}"
-    state: "{% if 'sudo' in item and item.sudo %}present{% else %}absent{%endif%}"
+    state: "{% if 'sudo' in item and item.sudo %}present{% else %}absent{% endif %}"
     user: "{{ item.username }}"
     commands: ALL
   loop: "{{ users }}"
