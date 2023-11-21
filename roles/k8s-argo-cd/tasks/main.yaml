@@ -26,27 +26,5 @@
   kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig }}"
     state: present
-    definition:
-      apiVersion: argoproj.io/v1alpha1
-      kind: Application
-      metadata:
-        name: bootstrap
-        namespace: argo-cd
-      spec:
-        destination:
-          namespace: argo-cd
-          server: https://kubernetes.default.svc
-        project: default
-        source:
-          path: "{{ bootstrap_repo_path }}"
-          repoURL: "{{ bootstrap_repo_url }}"
-          targetRevision: HEAD
-          helm:
-            parameters:
-              - name: domain
-                value: "{{ domain }}"
-              - name: mail_address
-                value: "{{ mail_address }}"
-        syncPolicy:
-          automated: {}
+    definition: "{{ bootstrap_application }}"
   delegate_to: localhost
