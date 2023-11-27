@@ -11,7 +11,7 @@
       - htop
       - vim
       - net-tools
-      - inetutils-ping
+      - iputils-ping
       - git
       - curl
       - dnsutils
