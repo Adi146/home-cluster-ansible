@@ -38,6 +38,7 @@
     - role: "nfs-server"
       vars:
         path: /data
+        mount_device: /dev/md0
   tasks:
     - name: Untaint
       kubernetes.core.k8s_taint:

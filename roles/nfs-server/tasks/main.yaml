@@ -11,6 +11,14 @@
     state: directory
     mode: '0777'
 
+- name: Mount device
+  ansible.posix.mount:
+    path: "{{ path }}"
+    src: "{{ mount_device }}"
+    fstype: "{{ mount_fstype }}"
+    state: mounted
+  when: mount_device
+
 - name: "Create exports"
   ansible.builtin.template:
     src: exports.j2

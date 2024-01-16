@@ -1,1 +1,3 @@
 path: NULL
+mount_device: NULL
+mount_fstype: ext4
