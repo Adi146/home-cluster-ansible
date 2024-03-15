@@ -57,5 +57,5 @@
         definition:
           metadata:
             labels:
-              node.kubernetes.io/exclude-from-external-load-balancers: "false"
+              node.kubernetes.io/exclude-from-external-load-balancers: NULL
       delegate_to: localhost
