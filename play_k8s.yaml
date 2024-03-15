@@ -48,3 +48,14 @@
         taints:
           - key: node-role.kubernetes.io/control-plane
       delegate_to: localhost
+
+    - name: Remove exclude-from-external-load-balancers
+      kubernetes.core.k8s:
+        state: patched
+        kind: Node
+        name: "{{ ansible_facts['hostname'] }}"
+        definition:
+          metadata:
+            labels:
+              node.kubernetes.io/exclude-from-external-load-balancers: "false"
+      delegate_to: localhost
