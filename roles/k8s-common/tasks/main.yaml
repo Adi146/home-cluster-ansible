@@ -43,10 +43,9 @@
   ansible.builtin.deb822_repository:
     name: kubernetes
     types: [deb]
-    uris: "https://apt.kubernetes.io"
-    signed_by: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
-    suites: [kubernetes-xenial]
-    components: [main]
+    uris: https://pkgs.k8s.io/core:/stable:/v{{ kubernetes_major_version }}/deb/
+    signed_by: https://pkgs.k8s.io/core:/stable:/v{{ kubernetes_major_version }}/deb/Release.key
+    suites: /
     state: present
     enabled: true
 
