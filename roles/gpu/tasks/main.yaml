@@ -1,0 +1,36 @@
+- name: include nvidia.nvidia_driver
+  ansible.builtin.include_role:
+    name: nvidia.nvidia_driver
+
+- name: Add nvidia-container repo
+  ansible.builtin.deb822_repository:
+    name: nvidia-container
+    types: [deb]
+    uris: https://nvidia.github.io/libnvidia-container/stable/deb/$(ARCH)
+    signed_by: https://nvidia.github.io/libnvidia-container/gpgkey
+    suites: /
+    state: present
+    enabled: true
+
+- name: Install nvidia-container-toolkit
+  ansible.builtin.apt:
+    pkg:
+      - nvidia-container-toolkit
+    update_cache: true
+  notify:
+    - configure container runtime
+    - restart crio
+
+- name: Create CRI-O Nvidia configuration
+  template:
+    src: 99-nvidia.conf.tpl
+    dest: /etc/crio/crio.conf.d/99-nvidia.conf
+  notify:
+    - restart crio
+
+- name: Create nvidia-container-runtime configuration
+  template:
+    src: config.toml.tpl
+    dest: /etc/nvidia-container-runtime/config.toml
+  notify:
+    - restart crio

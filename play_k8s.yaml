@@ -6,9 +6,19 @@
   gather_facts: true
   connection: ssh
   roles:
-    - role: 'common'
+    - role: "common"
       vars:
         user: "{{ users }}"
+
+- name: "GPU Setup"
+  hosts: all:!localhost
+  become: true
+  become_method: ansible.builtin.sudo
+  become_user: root
+  gather_facts: true
+  connection: ssh
+  roles:
+    - role: "gpu"
 
 - name: "Common Kubernetes Setup"
   hosts: "masters, workers"

@@ -1,0 +1,8 @@
+- name: configure container runtime
+  ansible.builtin.command: nvidia-ctk runtime configure --runtime=crio
+
+- name: restart crio
+  ansible.builtin.systemd:
+    name: crio
+    state: restarted
+    enabled: true
