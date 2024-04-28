@@ -1,4 +1,4 @@
 ---
 crio_os: "x{{ ansible_facts['distribution'] }}_{{ ansible_facts['distribution_version'] }}"
-kubernetes_version: "1.28.7-1.1"
+kubernetes_version: "1.28.8-1.1"
 kubernetes_major_version: "{{ (kubernetes_version | split('.'))[:2] | join('.')  }}"
